@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,16 +27,20 @@ public abstract class AbstractJsonRpcServlet extends HttpServlet {
 
     private static final String ENCODING = "UTF-8";
 
-    protected static Logger log = Logger.getLogger(AbstractJsonRpcServlet.class
-        .getName());
+    private static final String JSON_MIME_TYPE = "application/json";
 
-    private static final String MIME_TYPE = "application/json";
+    protected static final Logger LOG = Logger
+        .getLogger(AbstractJsonRpcServlet.class.getName());
 
     private static final long serialVersionUID = -6602353013259628191L;
 
     protected RpcDispatcher fDispatcher = new RpcDispatcher();
 
     public AbstractJsonRpcServlet() {
+    }
+
+    protected int getWaitTimeout() {
+        return 100;
     }
 
     @Override
@@ -99,7 +104,7 @@ public abstract class AbstractJsonRpcServlet extends HttpServlet {
     }
 
     public IOException reportError(String msg, Throwable t) {
-        log.log(Level.WARNING, msg, t);
+        LOG.log(Level.WARNING, msg, t);
         if (t instanceof IOException) {
             return (IOException) t;
         }
@@ -113,22 +118,29 @@ public abstract class AbstractJsonRpcServlet extends HttpServlet {
         try {
             req.setCharacterEncoding(ENCODING);
             resp.setCharacterEncoding(ENCODING);
-            resp.setContentType(MIME_TYPE);
-
+            resp.setContentType(JSON_MIME_TYPE);
             RpcRequest request = readRequest(req);
+            final RpcResponse[] result = { null };
             fDispatcher.handle(request, new IRpcCallback() {
                 @Override
                 public void finish(RpcResponse response) {
-                    try {
-                        resp.setStatus(200);
-                        String msg = response.toString();
-                        byte[] array = msg.getBytes(ENCODING);
-                        resp.getOutputStream().write(array);
-                    } catch (Throwable t) {
-                        reportError("Can not send the response", t);
+                    synchronized (result) {
+                        result[0] = response;
+                        result.notifyAll();
                     }
                 }
             });
+            int waitTimeout = getWaitTimeout();
+            while (true) {
+                synchronized (result) {
+                    if (result[0] != null) {
+                        break;
+                    }
+                    result.wait(waitTimeout);
+                }
+            }
+            final ServletOutputStream out = resp.getOutputStream();
+            out.write(result[0].toString().getBytes(ENCODING));
         } catch (Exception t) {
             throw reportError(
                 "Can not download a resource with the specified URL",
