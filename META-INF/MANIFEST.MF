@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Export-Package: org.webreformatter.commons.json.rpc.servlet;version="1.1.5"
+Bundle-Version: 1.1.5
+Bundle-Name: org.webreformatter.commons.json.rpc.servlet
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Bundle-Description: WebReformatter RPC Servlet
+Bundle-SymbolicName: org.webreformatter.commons.json.rpc.servlet
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.servlet,
+ javax.servlet.http,
+ org.webreformatter.commons.json;version="1.1.5",
+ org.webreformatter.commons.json.rpc;version="1.1.5",
+ org.webreformatter.commons.json.rpc.servlet;version="1.1.5"

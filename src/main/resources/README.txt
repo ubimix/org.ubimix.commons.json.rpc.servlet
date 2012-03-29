@@ -1,0 +1,1 @@
+This library provides client and server adapters implementing JSON RPC protocol.  
