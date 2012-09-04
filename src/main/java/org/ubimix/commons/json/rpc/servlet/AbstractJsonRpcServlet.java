@@ -1,4 +1,4 @@
-package org.webreformatter.commons.json.rpc.servlet;
+package org.ubimix.commons.json.rpc.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.webreformatter.commons.json.rpc.IRpcCallHandler.IRpcCallback;
-import org.webreformatter.commons.json.rpc.RpcCallHandler;
-import org.webreformatter.commons.json.rpc.RpcDispatcher;
-import org.webreformatter.commons.json.rpc.RpcError;
-import org.webreformatter.commons.json.rpc.RpcRequest;
-import org.webreformatter.commons.json.rpc.RpcResponse;
+import org.ubimix.commons.json.rpc.IRpcCallHandler.IRpcCallback;
+import org.ubimix.commons.json.rpc.RpcCallHandler;
+import org.ubimix.commons.json.rpc.RpcDispatcher;
+import org.ubimix.commons.json.rpc.RpcError;
+import org.ubimix.commons.json.rpc.RpcRequest;
+import org.ubimix.commons.json.rpc.RpcResponse;
 
 /**
  * @author kotelnikov
